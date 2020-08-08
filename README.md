@@ -1,7 +1,4 @@
-[] Cadastro de users
-[] Autenticação de users
-[] Cadastro de permissões
-[] Cadastro de roles
-[] Cadastro de Produtos
-[] Conexão user_roles
-[] Conexão permission_roles
+# ACCESS CONTROL
+
+:closed_lock_with_key: API with NodeJS for user permission control
+
