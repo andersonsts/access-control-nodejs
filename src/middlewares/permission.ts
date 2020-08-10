@@ -1,42 +1,43 @@
-import { Request, Response, NextFunction } from 'express';
-import { decode } from 'jsonwebtoken';
-import { getCustomRepository } from 'typeorm';
+// import { Request, Response, NextFunction } from 'express';
+// import { decode } from 'jsonwebtoken';
+// import { getCustomRepository } from 'typeorm';
 
-import UserRepository from '../repositories/UserRepository';
-import User from '../models/User';
+// import UserRepository from '../repositories/UserRepository';
+// import User from '../models/User';
 
-async function decoder(request: Request): Promise<User | undefined> {
-  const authHeader = request.headers.authorization || "";
-  const userRepository = getCustomRepository(UserRepository);
+// async function decoder(request: Request): Promise<User | undefined> {
+//   const authHeader = request.headers.authorization || "";
+//   const userRepository = getCustomRepository(UserRepository);
 
-  const [, token] = authHeader?.split(" ");
+//   const [, token] = authHeader?.split(" ");
 
-  const payload = decode(token);
+//   const payload = decode(token);
 
-  const user = await userRepository.findOne(payload?.sub, { relations: ['roles'] });
+//   const user = await userRepository.findOne(payload?.sub, { relations: ['roles'] });
 
-  return user;
-}
+//   return user;
+// }
 
-function is(role: String[]) { // Admin, User
-  const roleAuthorized = async (
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) => {
-    const user = await decoder(request);
-    const userRoles = user?.roles.map(role => role.name);
+// function is(role: String[]) { // Admin, User
+//   const roleAuthorized = async (
+//     request: Request,
+//     response: Response,
+//     next: NextFunction
+//   ) => {
+//     const user = await decoder(request);
+//     const userRoles = user?.roles.map(role => role.name);
+//     const user = await getCustomRepository(UserRepository).findOne(payload?.sub, { relations: ['roles'] });
 
-    const existsRoles = userRoles?.some(r => role.includes(r));
+//     const existsRoles = userRoles?.some(r => role.includes(r));
 
-    if(existsRoles) {
-      return next();
-    }
+//     if(existsRoles) {
+//       return next();
+//     }
 
-    return response.status(401).json({ message: "Not authorized!" });
-  }
+//     return response.status(401).json({ message: "Not authorized!" });
+//   }
 
-  return roleAuthorized;
-}
+//   return roleAuthorized;
+// }
 
-export { is };
+// export { is };

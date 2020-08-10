@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
-
-import UserRepository from '../repositories/UserRepository';
 import { getCustomRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
+import { classToClass } from 'class-transformer';
+
+import UserRepository from '../repositories/UserRepository';
+
+import authConfig from '../config/auth';
 
 class SessionController {
-  async create(request: Request, response: Response) {
-    const {username, password} = request.body;
+  public async create(request: Request, response: Response): Promise<Response> {
+    const { username, password } = request.body;
 
     const userRepository = getCustomRepository(UserRepository);
 
@@ -20,21 +23,26 @@ class SessionController {
     const matchPassword = await compare(password, user.password);
 
     if(!matchPassword) {
-      return response.status(401).json({ error: 'Incorrect password or username!' });
+      return response.status(401).json({ error: 'Incorrect username or password!' });
     }
+
+    const { secret, expiresIn } = authConfig.jwt;
 
     const roles = user.roles.map(role => role.name);
 
-    const token = sign({ roles }, '5dc4f62a0fed36c814d56e05b309ec67', {
-      subject: user.id, // PS: subject precisa ser uma string...
-      expiresIn: '1d' // expiração de 1d
-    });
+    // const token = sign({ roles }, secret, {
+    //   subject: user.id, // PS: subject precisa ser uma string...
+    //   expiresIn // expiração de 1d
+    // });
 
-    delete user.password;
+    const token = sign({}, secret, {
+      subject: user.id,
+      expiresIn
+    });
 
     return response.json({
       token,
-      user
+      user: classToClass(user)
     })
   }
 }
