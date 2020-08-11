@@ -20,14 +20,12 @@ class SessionController {
 
     if(!user) {
       throw new AppError('User not found!');
-      // return response.status(401).json({ error: 'User not found!' });
     }
 
     const matchPassword = await compare(password, user.password);
 
     if(!matchPassword) {
-      return response.status(401).json({ error: 'Incorrect username or password!' });
-      // throw new AppError('Incorrect username or password!');
+      throw new AppError('Incorrect username or password!');
     }
 
     const { secret, expiresIn } = authConfig.jwt;
