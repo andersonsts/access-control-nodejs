@@ -4,6 +4,8 @@ import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { classToClass } from 'class-transformer';
 
+import AppError from '../errors/AppError';
+
 import UserRepository from '../repositories/UserRepository';
 
 import authConfig from '../config/auth';
@@ -17,13 +19,15 @@ class SessionController {
     const user = await userRepository.findOne({username}, { relations: ['roles'] });
 
     if(!user) {
-      return response.status(401).json({ error: 'User not found!' });
+      throw new AppError('User not found!');
+      // return response.status(401).json({ error: 'User not found!' });
     }
 
     const matchPassword = await compare(password, user.password);
 
     if(!matchPassword) {
       return response.status(401).json({ error: 'Incorrect username or password!' });
+      // throw new AppError('Incorrect username or password!');
     }
 
     const { secret, expiresIn } = authConfig.jwt;

@@ -42,7 +42,7 @@ class UserController {
   }
 
   async update(request: Request, response: Response): Promise<Response> {
-    const user_id = request.params.user_id;
+    const user_id = request.user.id;
     const avatarFileName = request.file.filename;
 
     const userRepository = getCustomRepository(UserRepository);
